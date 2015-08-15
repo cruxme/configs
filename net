@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# CRUX Linux network initualization script, inspired by default (/etc/rc.d/net)
+
+dev="enp2s2"
+
+case $1 in
+   start)
+      sudo macc -r -b $dev
+      sudo /sbin/ip link set $dev up
+      sudo dhcpcd && dhcpcd -k && dhcpcd
+      echo "Network started!"
+      ;;
+   stop)
+      sudo dhcpcd -k
+      sudo /sbin/ip link set $dev down
+      echo "Network stopped!"
+      ;;
+   reconf)
+      sudo dhcpcd -k
+      sudo /sbin/ip link set $dev down
+      sudo macc -r -b $dev
+      sudo /sbin/ip link set $dev up
+      sudo dhcpcd && dhcpcd -k && dhcpcd
+      echo "Network reconfigured!"
+      ;;
+   *)
+      echo "Usage: net [ start | stop | reconf ]"
+      ;;
+esac
